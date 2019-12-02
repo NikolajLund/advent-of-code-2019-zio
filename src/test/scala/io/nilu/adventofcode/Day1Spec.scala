@@ -1,4 +1,4 @@
-package io.nilu
+package io.nilu.adventofcode
 
 import org.scalatest.flatspec.AnyFlatSpec
 

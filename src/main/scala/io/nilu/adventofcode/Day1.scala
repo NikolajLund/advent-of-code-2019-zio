@@ -1,7 +1,8 @@
-package io.nilu
+package io.nilu.adventofcode
 
-import zio._
+import io.nilu.Utils
 import zio.console.Console
+import zio.{App, ZIO, console}
 
 object Day1 extends App {
 
