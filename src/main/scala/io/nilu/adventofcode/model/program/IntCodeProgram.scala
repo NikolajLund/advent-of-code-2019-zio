@@ -1,35 +1,33 @@
 package io.nilu.adventofcode.model.program
 
-case class IntCodeProgram(state: List[Int], cursor: Int) {
+case class IntCodeProgram(memory: List[Int], instructionPointer: Int) {
 
-  val OpCode: OpCode = {
-    state(cursor) match {
-      case 99 => FinishedOpCode
-      case code => ExecutableOpCode(code, state(state(cursor + 1)), state(state(cursor + 2)), state(cursor + 3))
+  val instruction: Instruction = {
+    memory(instructionPointer) match {
+      case 99 => FinishedInstruction
+      case code => ExecutableInstruction(code, memory(memory(instructionPointer + 1)), memory(memory(instructionPointer + 2)), memory(instructionPointer + 3))
     }
   }
 
-  override def toString: String = state.mkString(",")
+  override def toString: String = memory.mkString(",")
 }
 
 object IntCodeProgram {
-  private[this] val nextOpJump = 4
-
   def apply(stateString: String): IntCodeProgram =
     IntCodeProgram(stateString.split(",").map(_.toInt).toList, 0)
 
 
   def executeProgram(intCodeProgram: IntCodeProgram): IntCodeProgram = {
-    intCodeProgram.OpCode match {
-      case FinishedOpCode =>
+    intCodeProgram.instruction match {
+      case FinishedInstruction =>
         intCodeProgram
-      case ExecutableOpCode(code, param1, param2, param3) =>
+      case ExecutableInstruction(code, param1, param2, param3) =>
           val result = code match {
             case 1 => param1 + param2
             case _ => param1 * param2
           }
-          val newState = intCodeProgram.state.updated(param3, result)
-          executeProgram(IntCodeProgram(newState, intCodeProgram.cursor + nextOpJump))
+          val newState = intCodeProgram.memory.updated(param3, result)
+          executeProgram(IntCodeProgram(newState, intCodeProgram.instructionPointer + intCodeProgram.instruction.numberOfValuesInInstruction))
     }
   }
 }

@@ -12,7 +12,7 @@ object Day2 extends App {
   val executeProgramZ: ZIO[Console, Throwable, Unit] = for {
     input <- Utils.loadResourceLines(inputResourcePath).map(_.next())
     program = IntCodeProgram(input)
-    restoredProgram = IntCodeProgram(program.state.updated(1, 12).updated(2, 2), 0)
+    restoredProgram = IntCodeProgram(program.memory.updated(1, 12).updated(2, 2), 0)
     result = IntCodeProgram.executeProgram(restoredProgram)
     _ <- console.putStrLn(result.toString)
   } yield ()
