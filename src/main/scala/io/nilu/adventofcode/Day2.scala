@@ -17,8 +17,18 @@ object Day2 extends App {
     _ <- console.putStrLn(result.toString)
   } yield ()
 
+  val exploreProgramZ: ZIO[Console, Throwable, Unit] = for {
+    input <- Utils.loadResourceLines(inputResourcePath).map(_.next())
+    initialProgram = IntCodeProgram(input)
+    resultE = IntCodeProgram.findNounAndVerb(initialProgram, 19690720, 99, 99, 0)
+    _ <- resultE match {
+      case Right(result) => console.putStrLn(s"Noun: ${result.memory(1)}, Verb: ${result.memory(2)}, Check: ${100 * result.memory(1) + result.memory(2)}")
+      case Left(_) => console.putStrLn("No configuration found matching the result")
+    }
+  } yield ()
+
   override def run(args: List[String]): ZIO[zio.ZEnv, Nothing, Int] =
-    executeProgramZ.fold(_ => 1, _ => 0)
+    exploreProgramZ.fold(_ => 1, _ => 0)
 
 
 }

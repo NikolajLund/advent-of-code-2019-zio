@@ -27,7 +27,37 @@ object IntCodeProgram {
             case _ => param1 * param2
           }
           val newState = intCodeProgram.memory.updated(param3, result)
-          executeProgram(IntCodeProgram(newState, intCodeProgram.instructionPointer + intCodeProgram.instruction.numberOfValuesInInstruction))
+          executeProgram(
+            IntCodeProgram(
+              newState,
+              intCodeProgram.instructionPointer + intCodeProgram.instruction.numberOfValuesInInstruction)
+          )
+    }
+  }
+
+  def findNoun(programWithVerb: IntCodeProgram, expectedResult: Int,
+                      nounUpperBound: Int, noun: Int): Either[Unit, IntCodeProgram] = {
+
+    val programWithNoun = IntCodeProgram(programWithVerb.memory.updated(1, noun), 0)
+    val executedProgram = IntCodeProgram.executeProgram(programWithNoun)
+
+    executedProgram.memory(0) match {
+      case 19690720 => Right(executedProgram)
+      case _ if noun < nounUpperBound =>  {
+        findNoun(programWithVerb, expectedResult, nounUpperBound, noun + 1)
+      }
+      case _ => Left(())
+    }
+  }
+
+  def findNounAndVerb(initialIntCodeProgram: IntCodeProgram, expectedResult: Int,
+                      nounUpperBound: Int, verbUpperBound: Int, verb: Int): Either[Unit, IntCodeProgram] = {
+
+    val programWithVerb = IntCodeProgram(initialIntCodeProgram.memory.updated(2, verb), 0)
+    findNoun(programWithVerb, expectedResult, nounUpperBound, 0) match {
+      case Right(result) => Right(result)
+      case _ if verb < verbUpperBound => findNounAndVerb(initialIntCodeProgram, expectedResult, nounUpperBound, verbUpperBound, verb + 1)
+      case _ => Left(())
     }
   }
 }
