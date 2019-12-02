@@ -42,7 +42,7 @@ object IntCodeProgram {
     val executedProgram = IntCodeProgram.executeProgram(programWithNoun)
 
     executedProgram.memory(0) match {
-      case 19690720 => Right(executedProgram)
+      case expected if expected == expectedResult => Right(executedProgram)
       case _ if noun < nounUpperBound =>  {
         findNoun(programWithVerb, expectedResult, nounUpperBound, noun + 1)
       }
