@@ -7,12 +7,21 @@ object Day1 extends App {
 
   private[this] val inputResourcePath = "input/day_1"
 
-  private[nilu] def getFuelRequired(mass: Int): Int = mass / 3 - 2
+  private[nilu] def getFuelRequiredForMass(mass: Int): Int = Math.max(mass / 3 - 2, 0)
+
+  private[nilu] def getFuelRequiredForMassRec(mass: Int): Int = {
+    val fuelRequiredForMass = getFuelRequiredForMass(mass)
+    if (fuelRequiredForMass > 0) {
+      fuelRequiredForMass + getFuelRequiredForMassRec(fuelRequiredForMass)
+    } else {
+      fuelRequiredForMass
+    }
+  }
 
   val calculateFuelRequiredZ: ZIO[Console, Throwable, Iterator[String]] = for {
     input <- Utils.loadResourceLines(inputResourcePath)
     masses = input.map(_.toInt)
-    fuelRequired = masses.map(getFuelRequired).sum
+    fuelRequired = masses.map(getFuelRequiredForMassRec).sum
     _ <- console.putStrLn(s"Total fuel requirement: $fuelRequired")
   } yield input
 
